@@ -1,7 +1,6 @@
 def top_scores(scores, n):
     scores.sort(reverse=True)
-    sorted_scores = scores
-    return sorted_scores[:n]
+    return scores[:n]
 
 def top_scores_no_rewrite(scores, n):
     return sorted(scores, reverse=True)[:n]
