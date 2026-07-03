@@ -5,8 +5,6 @@ def leaked_users_naive(train_users, test_users):
             leaked.append(user)
     return leaked
 
- 
-
 
 def leaked_users(train_users, test_users):
     leaked = set(train_users) & set(test_users)
