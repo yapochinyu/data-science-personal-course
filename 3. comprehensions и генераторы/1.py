@@ -4,4 +4,4 @@ print([temp for temp in temps if temp > 0])
 
 print([temp if temp >= 0 else 0 for temp in temps])
 
-print([temp**2 if temp >= 0 else temp for temp in temps])
+print([temp**2 for temp in temps if temp > 0 ])

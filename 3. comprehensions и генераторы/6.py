@@ -1,3 +1,5 @@
+from itertools import islice
+
 def fibonacci():
     a, b = 0, 1
     while True:
@@ -6,9 +8,4 @@ def fibonacci():
 
 gen = fibonacci()
 
-print(next(gen))
-print(next(gen))
-print(next(gen))
-print(next(gen))
-print(next(gen))
-print(next(gen))
+print(list(islice(fibonacci(), 10)))
