@@ -1,6 +1,6 @@
 class Dataset:
     def __init__(self, _data=None):
-        self.data = data
+        self.data = _data
     
     @property
     def size(self):
