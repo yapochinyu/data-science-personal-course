@@ -11,3 +11,4 @@ def load_config(path):
         raise ConfigError(f'Файл конфига не найден {path}') from e
     except json.JSONDecodeError as e:
         raise ConfigError(f'Файл конфига невалидный: {path}') from e
+    return config

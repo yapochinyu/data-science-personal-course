@@ -2,7 +2,7 @@ lines = ['0.91', '0.87', 'corrupt', '0.93', '', '1.2e-1', 'NaN?']
 
 def parse_metrics(lines):
     values, errors = [], [] 
-    for i, line in enumerate(lines):
+    for i, line in enumerate(lines, start=1):
         try:
             values.append(float(line))
         except ValueError as e:

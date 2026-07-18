@@ -13,4 +13,4 @@
 #     cache[x] = val
 
 # #idiom
-# val = cache.get(x, compute(x))
+# val = cache[x] if x in cache else cache.setdefault(x, compute(x))
