@@ -5,12 +5,13 @@ def memoize(func):
     result_dict = {}
     @wraps(func)
     def wrapper(*args, **kwargs):
-        if args in result_dict:
+        key = (args, tuple(sorted(kwargs.items())))
+        if key in result_dict:
             wrapper.hits += 1
-            return result_dict[args]
+            return result_dict[key]
         wrapper.misses += 1
         result = func(*args, **kwargs)
-        result_dict[args] = result
+        result_dict[key] = result
         return result
     wrapper.hits = 0
     wrapper.misses = 0
