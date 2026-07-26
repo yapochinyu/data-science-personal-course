@@ -1,12 +1,12 @@
 from functools import wraps
 from time import perf_counter
 
-def memorize(func):
+def memoize(func):
     result_dict = {}
     @wraps(func)
     def wrapper(*args, **kwargs):
         if args in result_dict:
-            wrapper.hits += 1 
+            wrapper.hits += 1
             return result_dict[args]
         wrapper.misses += 1
         result = func(*args, **kwargs)
@@ -17,7 +17,7 @@ def memorize(func):
     return wrapper
 
 
-@memorize
+@memoize
 def fib(n):
     if n < 2:
         return n
