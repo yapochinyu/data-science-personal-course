@@ -27,12 +27,20 @@ def generator(lst):
 def numpy_summator(array):
     return (array**2).sum()
 
+def measure(func, data, repeats=1):
+    times = []
+    for _ in range(repeats):
+        result, elapsed = func(data)
+        times.append(elapsed)
+    times = times[1:] if len(times) > 1 else times  # выбросить прогревочный вызов
+    return result, sum(times) / len(times)
+
+
 if __name__ == '__main__':
     million_list = list(range(1_000_000))
     small_list = list(range(10))
     million_array = np.array(million_list)
     small_array = np.array(small_list)
-
 
     runs = {
         'Python-цикл': (python_cycle, million_list, small_list),
@@ -40,8 +48,14 @@ if __name__ == '__main__':
         'Сумма ndarray': (numpy_summator, million_array, small_array)
         }
 
+    rows = []
     for name, (func, big_data, small_data) in runs.items():
-        result_big_data, elapsed_big_data = func(big_data)
-        result_small_data, elapsed_small_data = func(small_data)
-        print(f'{name} result on million = {result_big_data}, time on million = {elapsed_big_data}', end= ' ')
-        print(f'result on ten = {result_small_data}, time on ten = {elapsed_small_data}')
+        result_big, t_big = measure(func, big_data, repeats=1)
+        result_small, t_small = measure(func, small_data, repeats=100_000)
+        rows.append((name, result_big, t_big, result_small, t_small))
+
+    header = f"{'Способ':<20}{'Время (1e6), с':>18}{'Время (10), с':>18}"
+    print(header)
+    print('-' * len(header))
+    for name, result_big, t_big, result_small, t_small in rows:
+        print(f"{name:<20}{t_big:>18.6f}{t_small:>18.9f}")
