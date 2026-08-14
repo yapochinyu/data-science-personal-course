@@ -6,7 +6,7 @@
 
 def broadcast_cost(shape_a: tuple, shape_b: tuple, itemsize) -> tuple:
 
-    ndim = max(shape_a, shape_b)
+    ndim = max(len(shape_a), len(shape_b))
 
     shape_a = (1,) * (ndim - len(shape_a)) + shape_a
     shape_b = (1,) * (ndim - len(shape_b)) + shape_b
@@ -21,7 +21,9 @@ def broadcast_cost(shape_a: tuple, shape_b: tuple, itemsize) -> tuple:
         elif dim_b == 1:
             result_shape.append(dim_a)
         else:
-            print(f'shapes {shape_a} and {shape_b} are not broadcastable')
+            raise ValueError(
+                 f"shapes {shape_a} and {shape_b} are not broadcastable"
+            )
 
     result_shape = tuple(result_shape)
 
