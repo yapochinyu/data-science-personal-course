@@ -1,5 +1,6 @@
 import numpy as np
 import time
+import warnings
 from functools import wraps
 
 
@@ -31,6 +32,15 @@ def f_where(a):
     return np.where(a > 0, a**2, -a)
 
 
+@timer
+def f_masked(a):
+    out = np.empty_like(a)
+    m = a > 0
+    out[m] = a[m] ** 2
+    out[~m] = -a[~m]
+    return out
+
+
 def print_timings(funcs, a):
     rows = []
     for func in funcs:
@@ -50,10 +60,23 @@ def print_timings(funcs, a):
 
 if __name__ == '__main__':
     a = np.random.uniform(-1000, 1000, size=1_000_000)
-    print_timings([f_vectorize, f_listcomp, f_where], a)
+    print_timings([f_vectorize, f_listcomp, f_where, f_masked], a)
 
     ref = f_where(a)
-    for func in (f_vectorize, f_listcomp):
+    for func in (f_vectorize, f_listcomp, f_masked):
         assert np.allclose(func(a), ref)
+
+    # np.where вычисляет ОБЕ ветки на всём массиве -> плохой выбор,
+    # если одна из веток невалидна на части данных (например log от отрицательных)
+    x = np.array([-1.0, 4.0])
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        np.where(x > 0, np.log(x), 0.0)
+        assert len(w) == 1  # log посчитан и от -1 -> NaN + RuntimeWarning
+
+    out = np.zeros_like(x)
+    m = x > 0
+    out[m] = np.log(x[m])  # маска считает log только там, где x > 0 -> ни одного warning
 
     print('all tests passed')
