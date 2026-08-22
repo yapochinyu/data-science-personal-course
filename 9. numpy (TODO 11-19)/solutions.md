@@ -514,8 +514,66 @@ if __name__ == '__main__':
 
 ---
 
-## Задачи 11–19 — решений пока нет
+### 11. → Идея 13
 
-Задача 11 обсуждалась устно (подход: `X @ w + b`, `pred = raw > 0`), но код не написан и в репозитории отсутствует.
+**Код руками, «контестная».** Дана матрица объектов `X` формы `(n, d)`, вектор весов `w` формы `(d,)`, скаляр `b` и истинные метки `y` (0/1). Без единого цикла посчитай: предсказания по порогу 0, accuracy, precision, recall. Затем объясни, что сломается, если написать `X * w` вместо `X @ w`, и почему это не упадёт.
+
+```python
+import numpy as np
+
+
+def predict(X: np.ndarray, w: np.ndarray, b: float) -> np.ndarray:
+    raw = X @ w + b        # (n,) — по одному числу на объект
+    return (raw > 0).astype(int)
+
+
+def metrics(pred: np.ndarray, y: np.ndarray) -> dict:
+    tp = ((pred == 1) & (y == 1)).sum()
+    fp = ((pred == 1) & (y == 0)).sum()
+    fn = ((pred == 0) & (y == 1)).sum()
+
+    accuracy = (pred == y).mean()
+
+    precision_denom = tp + fp
+    precision = tp / precision_denom if precision_denom > 0 else 0.0
+
+    recall_denom = tp + fn
+    recall = tp / recall_denom if recall_denom > 0 else 0.0
+
+    return {'accuracy': accuracy, 'precision': precision, 'recall': recall}
+
+
+if __name__ == '__main__':
+    X = np.array([
+        [1., 2.],
+        [2., 1.],
+        [-1., -1.],
+        [0., 0.],
+        [3., 3.],
+    ])
+    w = np.array([1., -1.])
+    b = 0.0
+    y = np.array([1, 1, 0, 0, 1])
+
+    pred = predict(X, w, b)
+    m = metrics(pred, y)
+    print(pred, m)
+
+    # X * w вместо X @ w:
+    # X * w даёт форму (n, d) — w broadcast-ится по строкам, каждый элемент строки
+    # умножается на соответствующий вес, но суммирования по признакам не происходит.
+    # Не падает, потому что (n, d) * (d,) — валидный broadcast.
+    # raw = (X * w + b) > 0 сравнивает булеву маску формы (n, d) вместо (n,),
+    # и вся дальнейшая арифметика (accuracy/precision/recall) считается неверно
+    # или падает на несовпадении форм с y (n,) при попытке ((pred == 1) & (y == 1)).
+    wrong = X * w + b
+    print(wrong.shape)  # (5, 2), а не (5,)
+
+    print('all tests passed')
+```
+
+---
+
+## Задачи 12–19 — решений пока нет
 
 Задачи 12, 13, 14, 15, 16, 17, 18, 19 не начаты.
