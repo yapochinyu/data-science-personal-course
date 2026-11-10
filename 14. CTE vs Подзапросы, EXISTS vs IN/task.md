@@ -206,3 +206,218 @@
 - **`AVG`** — «сложить суммы и разделить на» (задача 1).
 - **`WHERE`** — «проходит только ответ «да»» (задача 3).
 - **`NOT`** — «меняет «да» на «нет»» (задача 4).
+
+
+Ниже заготовки для **восьми задач тренажёра**. В db<>fiddle выбери **PostgreSQL 18**, вставь нужный скрипт в поле подготовки данных, а своё решение пиши в поле запроса.
+
+**Для каждой задачи открывай отдельный fiddle**, поскольку названия некоторых таблиц повторяются.
+
+Во всех скриптах `CREATE TABLE` создаёт таблицу с перечисленными полями, а `INSERT INTO … VALUES` добавляет записи. Тип `integer` хранит целые числа, `text` — текст. `PRIMARY KEY` требует уникального и известного номера записи. `NOT NULL` требует заполненного значения, а без этого ограничения поле может содержать `NULL`.
+
+### 1. ★ Один отбор на две части отчёта
+
+```sql
+CREATE TABLE orders (
+    order_id integer PRIMARY KEY,
+    channel text NOT NULL,
+    amount integer NOT NULL
+);
+
+INSERT INTO orders (order_id, channel, amount)
+VALUES
+    (11, 'web', 60),
+    (12, 'web', 100),
+    (13, 'app', 300),
+    (14, 'web', 140),
+    (15, 'web', 20);
+```
+
+### 2. ★ Для каждого покупателя своё среднее
+
+```sql
+CREATE TABLE orders (
+    order_id integer PRIMARY KEY,
+    user_id integer NOT NULL,
+    amount integer NOT NULL
+);
+
+INSERT INTO orders (order_id, user_id, amount)
+VALUES
+    (21, 7, 40),
+    (22, 7, 100),
+    (23, 8, 80),
+    (24, 8, 120),
+    (25, 9, 50);
+```
+
+### 3. ★ Два способа проверить наличие посещения
+
+```sql
+CREATE TABLE users (
+    user_id integer PRIMARY KEY
+);
+
+CREATE TABLE visits (
+    user_id integer,
+    minutes integer NOT NULL
+);
+
+INSERT INTO users (user_id)
+VALUES
+    (31),
+    (32),
+    (33);
+
+INSERT INTO visits (user_id, minutes)
+VALUES
+    (31, 6),
+    (31, 8),
+    (32, 4),
+    (NULL, 9);
+```
+
+### 4. ★ Кто остался без крупного платежа
+
+```sql
+CREATE TABLE users (
+    user_id integer PRIMARY KEY
+);
+
+CREATE TABLE payments (
+    user_id integer,
+    amount integer NOT NULL
+);
+
+INSERT INTO users (user_id)
+VALUES
+    (41),
+    (42),
+    (43);
+
+INSERT INTO payments (user_id, amount)
+VALUES
+    (41, 150),
+    (42, 90),
+    (NULL, 160),
+    (43, 100);
+```
+
+### 5. Сколько значений можно поставить справа от сравнения
+
+Для этой задачи нужны три отдельных запуска. Сначала вставь основную заготовку.
+
+```sql
+CREATE TABLE sales (
+    amount integer NOT NULL
+);
+
+CREATE TABLE limits (
+    amount integer NOT NULL
+);
+
+INSERT INTO sales (amount)
+VALUES
+    (55),
+    (70),
+    (85);
+```
+
+**Первый запуск** — используй заготовку как есть. Таблица `limits` пустая.
+
+**Второй запуск** — добавь в конец заготовки следующую команду.
+
+```sql
+INSERT INTO limits (amount)
+VALUES
+    (70);
+```
+
+**Третий запуск** — вместо команды второго запуска добавь эту.
+
+```sql
+INSERT INTO limits (amount)
+VALUES
+    (70),
+    (70);
+```
+
+Здесь у `limits.amount` разрешены одинаковые значения, чтобы проверить случай с двумя одинаковыми строками.
+
+### 6. Сколько строк даёт одна пара и сколько даёт проверка
+
+```sql
+CREATE TABLE users (
+    user_id integer PRIMARY KEY
+);
+
+CREATE TABLE tickets (
+    user_id integer NOT NULL
+);
+
+INSERT INTO users (user_id)
+VALUES
+    (61),
+    (62),
+    (63);
+
+INSERT INTO tickets (user_id)
+VALUES
+    (61),
+    (61),
+    (62),
+    (61);
+```
+
+Каждая запись в `tickets` представляет отдельное обращение. Три записи с номером `61` нужно сохранить.
+
+### 7. Одна строка с числом и пустой результат
+
+```sql
+CREATE TABLE refunds (
+    amount integer NOT NULL
+);
+
+INSERT INTO refunds (amount)
+VALUES
+    (12),
+    (35),
+    (50),
+    (80);
+```
+
+Чтобы проверить своё решение **на пустой таблице**, запусти подготовку только с `CREATE TABLE`, убрав добавление записей.
+
+Чтобы проверить **наличие возврата выше 100**, добавь в конец основной заготовки следующую команду.
+
+```sql
+INSERT INTO refunds (amount)
+VALUES
+    (120);
+```
+
+### 8. Один запрос, два способа получить ответ
+
+```sql
+CREATE TABLE stores (
+    store_id integer PRIMARY KEY
+);
+
+INSERT INTO stores (store_id)
+VALUES
+    (11),
+    (12),
+    (13),
+    (14);
+```
+
+Эта задача прежде всего на устное объяснение. Заготовка позволяет дополнительно написать и выполнить запрос с `WITH` из условия.
+
+## Проверка терминов
+
+- **`CREATE TABLE`** — «создаёт таблицу с перечисленными полями».
+- **`INSERT INTO … VALUES`** — «добавляет записи».
+- **`integer`** — «хранит целые числа».
+- **`text`** — «текст».
+- **`PRIMARY KEY`** — «уникального и известного номера».
+- **`NOT NULL`** — «требует заполненного значения».
+- **`NULL`** — «поле может содержать `NULL`».
